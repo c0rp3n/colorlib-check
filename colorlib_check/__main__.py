@@ -41,8 +41,8 @@ def parse_config(file, include_ref_colors : bool):
 def add_default_colors():
     """Add the default engine colors."""
 
-    for (key, _) in ENGINE_COLORS:
-            COLORS.add(key)
+    for c in ENGINE_COLORS:
+            COLORS.add(c)
 
 def main():
     parser = argparse.ArgumentParser(
