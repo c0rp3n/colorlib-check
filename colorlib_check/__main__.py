@@ -8,7 +8,7 @@ import yaml
 
 import re
 
-from colorlib_gen.defs import DEFAULT_COLOR, ENGINE_COLORS
+from colorlib_check.defs import DEFAULT_COLOR, ENGINE_COLORS
 
 COLORS = set()
 
@@ -41,7 +41,7 @@ def parse_config(file, include_ref_colors : bool):
 def add_default_colors():
     """Add the default engine colors."""
 
-    for (key, _) in ENGINE_COLORS.items():
+    for (key, _) in ENGINE_COLORS:
             COLORS.add(key)
 
 def main():
