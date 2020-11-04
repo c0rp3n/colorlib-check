@@ -22,7 +22,7 @@ Then you can rerun `colorlib_check` on a file to find any bad color tags.
 
 #### Example
 ```bash
-# for more info use ./color_gen.py -h
+# for more info use ./colorlib_check.py -h
 colorlib_check -re -c "./example_conf.yaml" "./colorlib_example.sp"
 ```
 
