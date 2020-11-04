@@ -26,35 +26,57 @@ Then you can rerun `colorlib_check` on a file to find any bad color tags.
 colorlib_check -re -c "./example_conf.yaml" "./colorlib_example.sp"
 ```
 
-#### Example GitHub workflow for SourcePawn
+#### GitHub workflow for Checking Plugins and Translations
 __Note:__ _This must executed before the plugins will be compiled._
 ```yaml
-- name: Set up Python
-  uses: actions/setup-python@v2
-  with:
-    python-version: '3.x'
+name: Check files with ColorLib - Check
 
-- name: ColorLib Check - Install Dependencies
-  run: python3 -m pip install --upgrade pip setuptools wheel
+on: [push, pull_request]
 
-- name: ColorLib Check - Download
-  run: |
-    cd tools
-    git clone https://github.com/c0rp3n/colorlib-check.git
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
 
-- name: ColorLib Check - Install
-  run: |
-    cd tools/colorlib-check
-    pip install -r ./requirements.txt
-    python3 ./setup.py install
+    steps:
+      - uses: actions/checkout@v2
 
-- name: ColorLib Check - Check Files
-  run: |
-    for file in $(find . -name '*.sp' -name '*.phrases.txt')
-    do
-      echo -e "\Checking $file..."
-      colorlib_check -re -c "./example_conf.yaml" $file
-    done
+      - name: Set environment variables
+        run: |
+          echo "SOURCEMOD_PATH=$GITHUB_WORKSPACE/addons/sourcemod" >> $GITHUB_ENV
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install Dependencies
+        run: python3 -m pip install --upgrade pip setuptools wheel
+
+      - name: Clone
+        uses: actions/checkout@v2
+        with:
+          repository: 'c0rp3n/colorlib-check'
+          ref: 'master'
+          path: 'deps/colorlib-check'
+
+      - name: Install
+        run: |
+          pip install -r ./requirements.txt
+          python3 ./setup.py install
+          echo "CHECK_PATH=$GITHUB_WORKSPACE/deps/colorlib-check" >> $GITHUB_ENV
+        working-directory: ./deps/colorlib-check/
+
+      - name: Check Files
+        run: |
+          for file in $(find . -name '*.sp' -o -name '*.phrases.txt')
+          do
+            echo -e "Checking $file..."
+            colorlib_check -re -c "$CHECK_PATH/example_conf.yaml" $file
+          done
+        working-directory: ${{ env.SOURCEMOD_PATH }}/
+
 ```
 
 ## Download
