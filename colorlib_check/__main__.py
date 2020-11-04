@@ -14,14 +14,16 @@ COLORS = set()
 
 def check_file(file) -> int:
     count = 0
+    string = re.compile(r'"(.*)"')
     pattern = re.compile(r'{([A-Za-z][\w\s]+)}')
 
     lines = file.readlines()
     for i, line in enumerate(lines):
-        for m in pattern.finditer(line):
-                if m.group(1) not in COLORS:
-                    count = count + 1
-                    print('{}:{}:{}: error bad color tag \'{}\''.format(file.name, i + 1, m.start(0), m.group(1)))
+        for s in string.finditer(line):
+            for m in pattern.finditer(line, s.start(0), s.end(0)):
+                    if m.group(1) not in COLORS:
+                        count = count + 1
+                        print('{}:{}:{}: error bad color tag \'{}\''.format(file.name, i + 1, m.start(0), m.group(1)))
 
     return count
 
