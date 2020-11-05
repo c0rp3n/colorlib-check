@@ -86,9 +86,13 @@ def main():
     if args.include_engine_colors or args.config is not None:
         add_default_colors()
 
-    if check_file(args.input) > 0:
+    count = check_file(args.input)
+    if count > 0:
         # report an error as there were bad tags in the file
+        print('\n{} bad tags found.\n'.format(count))
         sys.exit(1)
+
+    print('Passed.\n')
 
 if __name__ == '__main__':
     main()
